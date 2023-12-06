@@ -4,8 +4,11 @@ const app = express()
 import dotenv from 'dotenv'
 import userRouter from './routes/user.route.js'
 import authRouter from './routes/auth.route.js'
+import  cors from 'cors';
 
-
+app.use(cors({
+    origin: '*',
+}));
 
 
 dotenv.config();
@@ -15,6 +18,8 @@ mongoose.connect(process.env.MONGO).then(() => {
 }).catch(err => {
     console.log(err)
 })
+
+
 
 app.use(express.json());
 app.listen(3000, () => {

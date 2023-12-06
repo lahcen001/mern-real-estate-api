@@ -9,11 +9,11 @@ const signup   = async (req, res, next) => {
 
 const {username , email , password} = req.body;
 
-const hashepass = bcryptjs.hashSync(password, 10)
+//const hashepass =  await bcryptjs.hashSync(password, 10)
 const newUser = new User({
     username,
     email,
-    password:hashepass
+    password
 })
 
 
