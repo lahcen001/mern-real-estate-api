@@ -63,7 +63,7 @@ navigate('/signin')
        className='border p-3 rounded-lg' id='email'
        />
        
-       <input type='text' onChange={handleChange} placeholder='password'
+       <input type='password' onChange={handleChange} placeholder='password'
        className='border p-3 rounded-lg' id='password'
        />
 

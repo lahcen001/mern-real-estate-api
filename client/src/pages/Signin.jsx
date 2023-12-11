@@ -12,7 +12,7 @@ function SignIn() {
        className='border p-3 rounded-lg' id='email'
        />
        
-       <input type='text' placeholder='password'
+       <input type='password' placeholder='password'
        className='border p-3 rounded-lg' id='password'
        />
 
