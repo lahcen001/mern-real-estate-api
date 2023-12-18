@@ -4,7 +4,7 @@ import {app} from '../firebase'
 import { useDispatch } from 'react-redux';
 import { signInSuccess } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 export default function OAuth() {
 const dispatch = useDispatch();
@@ -38,7 +38,7 @@ console.log(error)
         }
     }
   return (<>
-    <FontAwesomeIcon icon="fa-brands fa-google" />
+   
     <button 
     type='button' 
     onClick={handleGoogleClick} 
