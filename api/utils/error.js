@@ -3,5 +3,6 @@ export const errorHandler = (status, message) => {
     error.statusCode =status;
     error.message = message;
     return error;
+    
 
 }

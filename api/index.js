@@ -4,11 +4,12 @@ const app = express()
 import dotenv from 'dotenv'
 import userRouter from './routes/user.route.js'
 import authRouter from './routes/auth.route.js'
+ import listiningRouter from './routes/listining.route.js'
 import  cors from 'cors';
-import cookieParser  from 'cookie-parser'
-
+import  cookieParser  from 'cookie-parser';
 app.use(cors({
-    origin: '*',
+    credentials: true,
+    origin: '*'
 }));
 
 
@@ -20,23 +21,27 @@ mongoose.connect(process.env.MONGO).then(() => {
     console.log(err)
 })
 
-
-
+app.use(cookieParser());
 app.use(express.json());
 
-app.use(cookieParser());
 
 app.listen(3000, () => {
     console.log('Example app listening on port 3000!')
 })
 
+
+
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/listining',listiningRouter); 
+
 
 app.use((error, req, res, next) => {
     const status = error.statusCode || 500
     const message = error.message || 'Something went wrong'
     const data = error.data
+   
+
     res.status(status).json({
         message: message,
         status,

@@ -6,9 +6,13 @@ import dotenv from 'dotenv'
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {errorHandler} from '../utils/error.js';
+import cookieParser  from 'cookie-parser'
 
  export const signup   = async (req, res, next) => {
 
+
+
+app.use(cookieParser());
 const {username , email , password} = req.body;
 dotenv.config();
 
@@ -100,4 +104,19 @@ res.cookie('token',token,{
 }
 
 
+}
+
+
+ export const  signout = async (req, res, next) => {
+  
+try {
+
+
+  res.clearCookie('token').status(200).json('User signed out successfully');
+
+
+}
+catch(error){
+  next(error);
+}
 }

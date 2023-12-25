@@ -1,5 +1,5 @@
 import { errorHandler }  from "./error.js"
-
+import jwt from "jsonwebtoken"
  const verifyToken = (req, res, next) => {
     const token = req.cookies.token
    
@@ -9,9 +9,10 @@ import { errorHandler }  from "./error.js"
     
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if(err) return next(errorHandler(401, 'Invalid token'))
-       req.user = user
+          req.user = user
+     
+          console.log('object', process.env.JWT_SECRET)
     })
-
 
 
 }
