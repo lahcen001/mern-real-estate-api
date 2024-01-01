@@ -5,6 +5,7 @@ import {app} from '../firebase'
 
 import {updateUserStart, updateUserSuccess, updateUserFailure ,deleteUserStart, deleteUserSuccess, deleteUserFailure  } from '../redux/user/userSlice';
 import {useDispatch} from 'react-redux';
+import {Link} from 'react-router-dom'
 
 function Profile() {
   const fileInput = React.useRef(null)
@@ -160,6 +161,9 @@ const SignOut = async (e) => {
 
 
        <button type='submit' className='bg-blue-700 text-white rounded-lg p-2 my-2 uppercase hover:opcacity-95  disabled:opacity-80'>Update</button>
+
+
+       <Link className="bg-green-700 text-center  text-white uppercase rounded-lg p-2 " to="/create"> Create listining</Link>
       </form>
       <div className='flex justify-between mt-5'>
         <button  onClick={DeleteAccount} className='text-red-700 cursor-pointer'>Delete Account</button>
