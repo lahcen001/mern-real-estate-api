@@ -10,7 +10,7 @@ const listiningSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    adresse: {
+    address: {
         type: String,
         required: true
     },
@@ -31,8 +31,16 @@ const listiningSchema = new mongoose.Schema({
         type: Boolean,
         required: true
     },
-    imagesURL: {
+    offer: {
+        type: Boolean,
+        required: true
+    },
+    imagesUrl: {
         type: Array,
+        required: true
+    },
+    userRef: {
+        type: String,
         required: true
     }
     
