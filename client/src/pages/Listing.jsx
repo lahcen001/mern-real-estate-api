@@ -18,14 +18,16 @@ import {
 
 // Import Swiper styles
 import "swiper/swiper-bundle.css";
-
+import { useSelector } from "react-redux";
 
 export default function Listing() {
+   const { currentUser } = useSelector((state) => state.user);
   const params = useParams();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
+ 
   useEffect(() => {
     FetchListing();
   }, []);
@@ -140,6 +142,12 @@ export default function Listing() {
             {listing?.furnished ? "Furnished" : "Not furnished"}
           </li>
         </ul>
+
+        {/* {currentUser && listing.userRef !== currentUser._id && (
+          <button className="bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-2">
+            contact agent
+          </button>
+        )} */}
       </div>
     </main>
   );

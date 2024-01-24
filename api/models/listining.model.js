@@ -42,8 +42,18 @@ const listiningSchema = new mongoose.Schema({
     userRef: {
         type: String,
         required: true
-    }
+    },
+    type: {
+        type: String,
+        required: true
+    },
+   parking: {
+       type: Boolean,
+       required: true
+   }
     
-})
+},
+{timestamps: true}
+)
 const Listining = mongoose.model('Listining', listiningSchema)
 export default Listining
