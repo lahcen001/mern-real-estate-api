@@ -13,7 +13,7 @@ app.use(cors({
     origin: '*'
 }));
 
-
+const PORT = process.env.PORT || 3000
 dotenv.config();
 mongoose.connect(process.env.MONGO).then(() => {
     
@@ -28,20 +28,20 @@ mongoose.connect(process.env.MONGO).then(() => {
 const __dirname = path.resolve();
 
 
-// app.use(express.static(path.join(__dirname, 'client/dist')));
+app.use(express.static(path.join(__dirname, 'client/dist')));
 
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'client/dist/index.html'));
-// })
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'dist','index.html'));
+})
 
 
 app.use(cookieParser());
 app.use(express.json());
 
 
-app.listen(3000, () => {
-    console.log('Example app listening on port 3000!')
-})
+app.listen(PORT, () => {
+  console.log("Example app listening on port 3000!");
+});
 
 
 

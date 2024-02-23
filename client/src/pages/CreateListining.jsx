@@ -5,7 +5,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { app } from "../firebase";
 export default function CreateListining() {
   const [file, setFile] = useState([]);
@@ -13,7 +13,7 @@ export default function CreateListining() {
   const [progress, setProgress] = useState(0);
   const [uploadImage, setUploadImage] = useState(false);
   const [error, setError] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const params = useParams();
   const [formdata, setFormData] = useState({
     imagesUrl: [],
@@ -28,7 +28,7 @@ export default function CreateListining() {
     offer: false,
     parking: false,
     type: "sell",
-   userRef: params.id
+    userRef: params.id,
   });
   const [loading, setLoading] = useState(false);
 
@@ -39,24 +39,15 @@ export default function CreateListining() {
     if (file.length > 0 && file.length < 7) {
       const promies = [];
       for (let i = 0; i < file.length; i++) {
-
-        
         promies.push(storeImage(file[i]));
-
-
       }
-
-      
 
       Promise.all(promies)
         .then((urls) => {
-      
           setFormData({
             ...formdata,
             imagesUrl: urls,
           });
-
-        
 
           setUploadImage(false);
           setUploadImageError(false);
@@ -83,7 +74,7 @@ export default function CreateListining() {
           const progress = Math.round(
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100
           );
-          
+
           setProgress(progress);
 
           switch (snapshot.state) {
@@ -116,11 +107,6 @@ export default function CreateListining() {
   };
 
   const handleChange = (e) => {
-
-
-
-
-  
     if (e.target.id === "sale" || e.target.id === "rent") {
       setFormData({
         ...formdata,
@@ -132,8 +118,6 @@ export default function CreateListining() {
       e.target.id === "parking" ||
       e.target.id === "offer"
     ) {
-
-  
       setFormData({
         ...formdata,
         [e.target.id]: e.target.checked,
@@ -153,43 +137,34 @@ export default function CreateListining() {
   };
 
   const handleSubmit = async (e) => {
+    console.log(" submitting... :", JSON.stringify(formdata));
 
-console.log(" submitting... :", JSON.stringify(formdata));
+    e.preventDefault();
 
-  e.preventDefault();
- 
-  try{
+    try {
+      if (formdata.imagesUrl.length < 1)
+        return setError("You must upload at least image");
+      setLoading(true);
+      setError(false);
+      const res = await fetch("http://localhost:3000/api/listining/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify(formdata),
+      });
 
-   if(formdata.imagesUrl.length < 1 ) return setError("You must upload at least image");
-   setLoading(true);
-setError(false)
-   const res = await fetch(
-     "http://localhost:3000/api/listining/create",
-     {
-       method: "POST",
-       headers: {
-         "Content-Type": "application/json",
-         accept: "application/json",
-       },
-       body: JSON.stringify(formdata),
-     }
-   );
+      const data = await res.json();
 
-   const data = await res.json();
-
- setLoading(false);
- if(data.success === false) return setError(data.message);
-    navigate("/listings/" + data._id);
-
-
-
-}catch{
-   setLoading(false);
-  setError(true);
-}
-
-
-  }
+      setLoading(false);
+      if (data.success === false) return setError(data.message);
+      navigate("/listings/" + data._id);
+    } catch {
+      setLoading(false);
+      setError(true);
+    }
+  };
 
   return (
     <main className="max-w-4xl p-3 mx-auto">

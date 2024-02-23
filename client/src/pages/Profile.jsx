@@ -1,196 +1,179 @@
-import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import {getDownloadURL, getStorage,ref, uploadBytesResumable} from 'firebase/storage'
-import {app} from '../firebase'
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../firebase";
 
-import {updateUserStart, updateUserSuccess, updateUserFailure ,deleteUserStart, deleteUserSuccess, deleteUserFailure  } from '../redux/user/userSlice';
-import {useDispatch} from 'react-redux';
-import {Link, Navigate} from 'react-router-dom'
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
+} from "../redux/user/userSlice";
+import { useDispatch } from "react-redux";
+import { Link, Navigate } from "react-router-dom";
 
 function Profile() {
-  const fileInput = React.useRef(null)
-  const {currentUser} = useSelector(state => state.user)
-  const [file, setFile] = useState(null)
-  const [progress, setProgress] = useState(0)
-  const [fileUploadError, setFileUploadError] = useState('')
-  const [formData, setFormData] = useState({
-    
-  })
-  const [userListings, setUserListings] = useState([])
-  
-const dispatch = useDispatch()
+  const fileInput = React.useRef(null);
+  const { currentUser } = useSelector((state) => state.user);
+  const [file, setFile] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [fileUploadError, setFileUploadError] = useState("");
+  const [formData, setFormData] = useState({});
+  const [userListings, setUserListings] = useState([]);
 
- useEffect(() => {
-  if(file) {
-   handleFileUpload(file)
-  }
-  }
-  , [file])
+  const dispatch = useDispatch();
 
-const handleFileUpload = (file) => {
-  const storage  = getStorage(app)
-  const fileName = new Date().getTime() + file.name
-  
-  const storageRef = ref(storage, fileName)
- const uploadTask = uploadBytesResumable(storageRef, file);
-    uploadTask.on('state_changed', (snapshot) => {
-    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    setProgress(Math.round(progress));
-  },
-  (error)=>{
-    setFileUploadError(error)
-  },
-  ()=>{
-    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-      setFormData({...formData, avatar: downloadURL})
-    })
-  } )
-    
-}
+  useEffect(() => {
+    if (file) {
+      handleFileUpload(file);
+    }
+  }, [file]);
 
-const handleChange =   (e) =>{
-  setFormData({...formData, [e.target.id]: e.target.value})
+  const handleFileUpload = (file) => {
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + file.name;
 
-
- 
-}
-const handleSubmit =async (e) =>{
-  e.preventDefault()
-
-
-
-  try {
-    dispatch(updateUserStart())
-
-const res  =  await fetch('http://localhost:3000/api/user/update/'+currentUser._id, {
-  method: 'put',
-  headers: {
-    'Content-Type': 'application/json',
-    'credentials': 'include',
-    'mode': 'cors'
-       
-  },
-  body: JSON.stringify(formData)
-})
-
-const data = await res.json()
-if(data.succes ==false){
-  dispatch(updateUserFailure(data.message))
-}
-
-
-  }catch(error){
-    dispatch(updateUserFailure(error))
-  }
-}
-
-
-
-const DeleteAccount = async (e) =>{
-   
-
-
-  try {
-    dispatch(deleteUserStart())
-    const res  =  await fetch('http://localhost:3000/api/user/delete/'+currentUser._id, {
-      mothod: 'delete',
-      headers: {
-        'Content-Type': 'application/json'
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(Math.round(progress));
       },
-      
+      (error) => {
+        setFileUploadError(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData({ ...formData, avatar: downloadURL });
+        });
+      }
+    );
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      dispatch(updateUserStart());
+
+      const res = await fetch(
+        "http://localhost:3000/api/user/update/" + currentUser._id,
+        {
+          method: "put",
+          headers: {
+            "Content-Type": "application/json",
+            credentials: "include",
+            mode: "cors",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await res.json();
+      if (data.succes == false) {
+        dispatch(updateUserFailure(data.message));
+      }
+    } catch (error) {
+      dispatch(updateUserFailure(error));
+    }
+  };
+
+  const DeleteAccount = async (e) => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(
+        "http://localhost:3000/api/user/delete/" + currentUser._id,
+        {
+          mothod: "delete",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await res.json();
+      if (data.success === false) {
+        return dispatch(deleteUserFailure(data.message));
       }
 
-   )
-
-   const data  = await res.json()
-   if (data.success === false){
-   return  dispatch(deleteUserFailure(data.message))
-   }
-
-   dispatch(deleteUserSuccess(data))
-
-}catch(error){
-  dispatch(deleteUserFailure(error))
-}
-}
-
-
-const SignOut = async (e) => {
-  
-  try {
-
-
-
-    dispatch(deleteUserStart())
-    const res  =  await fetch('http://localhost:3000/api/auth/signout', {
-      mothod: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error));
     }
-   )
+  };
 
-localStorage.clear();
-window.location.reload(false);
-
-}catch(error){
-  
-  dispatch(deleteUserFailure(error))
-}
-
-}
-const handleshowListings = async (e) =>{
-  
-try {
-  const res  =  await fetch('http://localhost:3000/api/user/listings/'+currentUser._id, {
-    mothod: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-  }
-)
-const data = await res.json()
-setUserListings(data)
-
-
-
-}catch(error){
-  console.log(error)
-}
-
-
-}
-
-const handleDelete = async (id) =>{
-  
-
-  try{
-    const res = await fetch(
-      "http://localhost:3000/api/listining/delete/" + id,
-      {
-        mothod: "DELETE",
+  const SignOut = async (e) => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch("http://localhost:3000/api/auth/signout", {
+        mothod: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-      }
-    );
-    const data = await res.json()
-    setUserListings(userListings.filter((item) => item._id !== id));
-    if(data.success === false){
-      return console.log(data.message)
+      });
+
+      localStorage.clear();
+      window.location.reload(false);
+    } catch (error) {
+      dispatch(deleteUserFailure(error));
     }
-  }
-  catch(error){
-    console.log(error)
-  }
-}
+  };
+  const handleshowListings = async (e) => {
+    try {
+      const res = await fetch(
+        "http://localhost:3000/api/user/listings/" + currentUser._id,
+        {
+          mothod: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await res.json();
+      setUserListings(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-const EditListing = (id) => {
-  console.log(id)
-  navigate(`/update-listing/${id}`)
-}
+  const handleDelete = async (id) => {
+    try {
+      const res = await fetch(
+        "http://localhost:3000/api/listining/delete/" + id,
+        {
+          mothod: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await res.json();
+      setUserListings(userListings.filter((item) => item._id !== id));
+      if (data.success === false) {
+        return console.log(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-
+  const EditListing = (id) => {
+    console.log(id);
+    navigate(`/update-listing/${id}`);
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -290,7 +273,6 @@ const EditListing = (id) => {
                 key={listing._id}
                 className="mt-5 flex justify-between items-center m-auto my-4 border rounded-lg "
               >
-
                 <Link to={`/listing/${listing._id}`}>
                   <img
                     src={
@@ -331,4 +313,4 @@ const EditListing = (id) => {
   );
 }
 
-export default Profile
+export default Profile;

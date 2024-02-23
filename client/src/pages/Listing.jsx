@@ -11,23 +11,21 @@ import {
   FaBed,
   FaBath,
   FaParking,
-  FaChair
-
+  FaChair,
 } from "react-icons/fa";
-
 
 // Import Swiper styles
 import "swiper/swiper-bundle.css";
 import { useSelector } from "react-redux";
 
 export default function Listing() {
-   const { currentUser } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const params = useParams();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
- 
+
   useEffect(() => {
     FetchListing();
   }, []);

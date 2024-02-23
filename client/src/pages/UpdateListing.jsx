@@ -14,7 +14,7 @@ export default function UpdateListing() {
   const [uploadImage, setUploadImage] = useState(false);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
-   const params = useParams();
+  const params = useParams();
   const [formdata, setFormData] = useState({
     imagesUrl: [],
     name: "",
@@ -135,21 +135,23 @@ export default function UpdateListing() {
   };
 
   const handleSubmit = async (e) => {
-   
     e.preventDefault();
 
     try {
       // if(formdata.imagesUrl.length < 1 ) return setError("You must upload at least image");
       setLoading(true);
       setError(false);
-      const res = await fetch("http://localhost:3000/api/listining/update/"+params.id, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          accept: "application/json",
-        },
-        body: JSON.stringify(formdata),
-      });
+      const res = await fetch(
+        "http://localhost:3000/api/listining/update/" + params.id,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            accept: "application/json",
+          },
+          body: JSON.stringify(formdata),
+        }
+      );
 
       const data = await res.json();
 
@@ -162,32 +164,24 @@ export default function UpdateListing() {
     }
   };
 
+  useEffect(() => {
+    GetListing();
+  }, []);
 
-useEffect (() => {
-   
-  
-  GetListing();
-
-}, []);
-
-
-
-const GetListing = async () => {
-
-  
-  const res = await fetch(
-    "http://localhost:3000/api/listining/get/" + params.id,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  const data = await res.json();
-  if (data.length < 1) return;
-  setFormData(data);
-};
+  const GetListing = async () => {
+    const res = await fetch(
+      "http://localhost:3000/api/listining/get/" + params.id,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await res.json();
+    if (data.length < 1) return;
+    setFormData(data);
+  };
 
   return (
     <main className="max-w-4xl p-3 mx-auto">
